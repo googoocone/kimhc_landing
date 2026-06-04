@@ -26,6 +26,12 @@
   --box4-bg: #f3ecfb; --box4-fg: #8a4fc7;
 }
 
+/* 초소형 화면(갤럭시 폴드 외부화면 ~280px 등) 대응 브레이크포인트.
+   xs(360px) 미만에서는 큰 제목을 한 단계 줄여 줄바꿈을 방지. */
+@theme {
+  --breakpoint-xs: 360px;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

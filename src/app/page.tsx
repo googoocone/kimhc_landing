@@ -131,10 +131,10 @@ export default function Home() {
 
           {/* 큰 제목 */}
           <h2 className="mt-16 whitespace-pre-line text-center leading-tight sm:mt-24 sm:leading-[66px]">
-            <span className="text-3xl font-bold text-sky-950 sm:text-5xl">
+            <span className="text-2xl font-bold text-sky-950 xs:text-3xl sm:text-5xl">
               {worries.headingBlue}
             </span>
-            <span className="text-3xl font-normal text-black sm:text-5xl">
+            <span className="text-2xl font-normal text-black xs:text-3xl sm:text-5xl">
               {worries.headingRest}
             </span>
           </h2>
@@ -151,7 +151,7 @@ export default function Home() {
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-8">
             {/* 왼쪽 텍스트 */}
             <div>
-              <h2 className="text-2xl font-normal leading-snug text-black sm:text-4xl sm:leading-[52px]">
+              <h2 className="text-xl font-normal leading-snug text-black xs:text-2xl sm:text-4xl sm:leading-[52px]">
                 <span>{lawyerIntro.headingBefore}</span>
                 <span className="font-bold text-sky-950">
                   {lawyerIntro.headingHighlight}
@@ -205,7 +205,7 @@ export default function Home() {
           <p className="mt-6 text-center text-base font-normal text-black">
             {differentiators.eyebrow}
           </p>
-          <h2 className="mt-4 text-center text-2xl font-medium text-black sm:text-[32px]">
+          <h2 className="mt-4 text-center text-xl font-medium text-black xs:text-2xl sm:text-[32px]">
             {differentiators.titleBefore}
             <span className="font-bold text-sky-950">
               {differentiators.titleHighlight}
@@ -250,7 +250,7 @@ export default function Home() {
       <section className="bg-white" data-section="05_correction">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 (모바일: 번호 위로 + "보정 대응이" 뒤 줄바꿈) */}
-          <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
+          <h2 className="text-center text-2xl font-medium leading-tight text-black xs:text-3xl sm:text-5xl">
             <span className="mb-2 block font-bold text-sky-950 sm:mb-0 sm:inline">
               {correction.no}
             </span>
@@ -288,7 +288,7 @@ export default function Home() {
       <section className="bg-white" data-section="06_chat">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 */}
-          <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
+          <h2 className="text-center text-2xl font-medium leading-tight text-black xs:text-3xl sm:text-5xl">
             <span className="mb-2 block font-bold text-sky-950 sm:mb-0 sm:inline">
               {chat.no}
             </span>
@@ -324,7 +324,7 @@ export default function Home() {
       <section className="bg-white" data-section="07_asset_defense">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 */}
-          <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
+          <h2 className="text-center text-2xl font-medium leading-tight text-black xs:text-3xl sm:text-5xl">
             <span className="mb-2 block font-bold text-sky-950 sm:mb-0 sm:inline">
               {assetDefense.no}
             </span>
@@ -352,7 +352,7 @@ export default function Home() {
       <section className="bg-white" data-section="08_fee">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 ("합리적인" 뒤 줄바꿈) */}
-          <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
+          <h2 className="text-center text-2xl font-medium leading-tight text-black xs:text-3xl sm:text-5xl">
             <span className="mb-2 block font-bold text-sky-950 sm:mb-0 sm:inline">
               {fee.no}
             </span>
@@ -418,7 +418,7 @@ export default function Home() {
       <section className="bg-neutral-100/50" data-section="09_reviews">
         <Wrap className="pt-16 sm:pt-24">
           {/* 제목 */}
-          <h2 className="text-center text-3xl font-normal leading-tight text-black sm:text-5xl sm:leading-[64px]">
+          <h2 className="text-center text-2xl font-normal leading-tight text-black xs:text-3xl sm:text-5xl sm:leading-[64px]">
             {reviews.titleNormal}
             <br />
             <span className="font-semibold text-sky-950">{reviews.titleBold}</span>
