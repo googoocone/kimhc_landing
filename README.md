@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 법무법인 평안 — 랜딩페이지
 
-## Getting Started
+Next.js로 만든 개인회생·파산 상담 랜딩페이지입니다. 전체 폭은 최대 **1220px**.
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 미리보기 (내 컴퓨터에서 보기)
+터미널에서:
 ```
+npm run dev
+```
+→ 브라우저에서 http://localhost:3000 열기. (글자/이미지 고치면 자동 새로고침)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✍️ 글자(문구) 수정하기
+딱 한 파일만 고치면 됩니다 → **`src/lib/content.ts`**
+- 따옴표 `" "` 안의 글자만 바꾸세요.
+- 줄을 바꾸고 싶으면 `\n` 을 넣으세요.
+- `★` 표시가 붙은 값은 제가 추정해 넣은 것이니 실제 문구로 교체해 주세요.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🖼 이미지 넣기
+1. 이미지 파일을 **`public/`** 폴더에 복사 (예: `public/lawyer.jpg`)
+2. 해당 자리(코드의 `<ImageSlot ... />`)에 `src="/lawyer.jpg"` 추가
+   ```tsx
+   <ImageSlot src="/lawyer.jpg" label="대표 변호사 사진" width={220} height={280} />
+   ```
+- `src` 를 넣기 전까지는 회색 점선 박스에 "권장 사이즈"가 표시됩니다.
+- 박스에 적힌 권장 px 비율에 맞춰 준비하면 가장 깔끔합니다.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎨 색상 바꾸기
+**`src/app/globals.css`** 상단의 색상 토큰 값만 바꾸면 전체에 반영됩니다.
+(`--navy` 제목색, `--accent` 빨강 버튼색, 강점 박스 4색 등)
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚀 Vercel 배포
+1. 이 폴더를 GitHub 저장소에 올리기
+2. vercel.com → New Project → 저장소 선택 → Deploy (설정 자동 인식)
+3. 배포 후 실제 도메인을 `src/lib/content.ts` 의 `site.url` 에 적어주면 SEO/공유 미리보기가 정확해집니다.
