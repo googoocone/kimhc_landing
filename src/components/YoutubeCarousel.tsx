@@ -5,8 +5,11 @@ import { useEffect, useState } from "react";
 /* 유튜브 썸네일 캐러셀
    - PC(lg↑): 한 화면에 3개 / 모바일: 1개
    - 좌우 화살표 + 페이지 점(dots)
-   - 썸네일 파일(youtube1~12)이 아직 없으면 회색 placeholder 표시 */
-export default function YoutubeCarousel({ thumbs }: { thumbs: string[] }) {
+   - 각 썸네일 클릭 시 해당 유튜브 영상으로 이동(새 탭)
+   - 썸네일 파일(youtube1~10)이 아직 없으면 회색 placeholder 표시 */
+type Thumb = { src: string; href: string };
+
+export default function YoutubeCarousel({ thumbs }: { thumbs: Thumb[] }) {
   const [perView, setPerView] = useState(1);
   const [page, setPage] = useState(0);
 
@@ -36,20 +39,26 @@ export default function YoutubeCarousel({ thumbs }: { thumbs: string[] }) {
           className="flex transition-transform duration-500 ease-out"
           style={{ transform: `translateX(-${page * 100}%)` }}
         >
-          {thumbs.map((src, i) => (
+          {thumbs.map((t, i) => (
             <div
               key={i}
               className="shrink-0 px-2"
               style={{ flexBasis: `${100 / perView}%` }}
             >
-              {/* 썸네일 (16:9). 이미지 없으면 뒤의 placeholder 노출 */}
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-black/5">
+              {/* 썸네일 (16:9) — 클릭 시 해당 유튜브 영상으로 이동. 이미지 없으면 뒤의 placeholder 노출 */}
+              <a
+                href={t.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`유튜브 영상 ${i + 1} 보기`}
+                className="relative block aspect-video w-full overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-black/5 transition hover:shadow-md hover:ring-black/10"
+              >
                 <span className="absolute inset-0 flex items-center justify-center text-sm text-gray-400">
                   유튜브 썸네일 {i + 1}
                 </span>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={src}
+                  src={t.src}
                   alt={`유튜브 영상 썸네일 ${i + 1}`}
                   loading="lazy"
                   onError={(e) => {
@@ -57,7 +66,7 @@ export default function YoutubeCarousel({ thumbs }: { thumbs: string[] }) {
                   }}
                   className="absolute inset-0 size-full object-cover"
                 />
-              </div>
+              </a>
             </div>
           ))}
         </div>

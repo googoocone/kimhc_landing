@@ -232,8 +232,19 @@ export const youtube = {
   headerImageWidth: 426,
   headerImageHeight: 128,
   body: "어려운 개인회생 전문 지식을\n보다 쉽게 설명해 드립니다",
-  // 썸네일 12장 (public 에 youtube1.png ~ youtube12.png 넣으면 자동 표시)
-  thumbs: Array.from({ length: 12 }, (_, i) => `/youtube${i + 1}.png`),
+  // 썸네일 10장 (youtube1.png ~ youtube10.png) + 클릭 시 이동할 유튜브 영상 링크
+  thumbs: [
+    { src: "/youtube1.png", href: "https://www.youtube.com/watch?v=ge6xr6D6y7M" },
+    { src: "/youtube2.png", href: "https://www.youtube.com/watch?v=jdAZs79D4eU" },
+    { src: "/youtube3.png", href: "https://www.youtube.com/watch?v=yCWBDJ9-zrw" },
+    { src: "/youtube4.png", href: "https://www.youtube.com/watch?v=G3sxSXsdfh8" },
+    { src: "/youtube5.png", href: "https://www.youtube.com/watch?v=SAPg3hau_FY" },
+    { src: "/youtube6.png", href: "https://www.youtube.com/watch?v=5OK84CqEiZU" },
+    { src: "/youtube7.png", href: "https://www.youtube.com/watch?v=GOT4Pr2cxrw" },
+    { src: "/youtube8.png", href: "https://www.youtube.com/watch?v=kHGwtYVzjhg" },
+    { src: "/youtube9.png", href: "https://www.youtube.com/watch?v=ASQISuu34To" },
+    { src: "/youtube10.png", href: "https://www.youtube.com/watch?v=zhbz7U9-qn4" },
+  ],
   channelText: "유튜브 채널",
   channelUrl: "#", // ★ 실제 유튜브 채널 주소로 교체
 };
