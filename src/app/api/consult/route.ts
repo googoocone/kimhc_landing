@@ -51,8 +51,9 @@ export async function POST(request: Request) {
     // 통합시트 열 제목과 1:1 매칭 (없는 열은 비워둠 = 사무실에서 채우는 칸)
     const now = new Date();
     const row = {
-      날짜: kstDate(now),
-      시간: kstTime(now),
+      // 앞에 ' 를 붙여 구글시트가 일련번호로 변환하지 않고 텍스트로 저장하게 함
+      날짜: `'${kstDate(now)}`,
+      시간: `'${kstTime(now)}`,
       요일: kstWeekday(now),
       "1차 유입경로": "홈페이지, 전화", // 홈페이지 뷰 탭에 걸러져 보이도록
       성명: name,

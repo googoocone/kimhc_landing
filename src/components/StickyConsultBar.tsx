@@ -119,13 +119,6 @@ export default function StickyConsultBar({
               <span className="text-sm font-medium sm:text-base">
                 신청이 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.
               </span>
-              <button
-                type="button"
-                onClick={() => setStatus("idle")}
-                className="ml-2 text-sm text-white/70 underline"
-              >
-                추가 신청
-              </button>
             </div>
           ) : (
             <>
