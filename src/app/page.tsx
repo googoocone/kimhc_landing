@@ -77,10 +77,10 @@ export default function Home() {
     <main className="w-full overflow-x-hidden bg-white pb-[100px] sm:pb-[110px]">
       {/* ───── 00. 최상단 띠배너 (전화 문의 CTA) ───── */}
       <div className="w-full bg-[#2b2b2b] text-white">
-        <div className="mx-auto flex max-w-[1220px] items-center justify-between gap-3 px-4 py-2.5 sm:px-8">
+        <div className="mx-auto flex max-w-[1220px] items-center justify-between gap-3 px-4 py-2.5 sm:px-8 lg:justify-center lg:gap-5">
           <p className="text-left text-xs font-medium leading-snug sm:text-sm">
-            {topBar.textBefore}
-            <br />
+            {topBar.textBefore}{" "}
+            <br className="lg:hidden" />
             <span className="font-bold text-white">{topBar.highlight}</span>
             {topBar.textAfter}
           </p>
