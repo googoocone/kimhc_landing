@@ -180,11 +180,12 @@ export const reviews = {
   image: "/reviews.png", // 4096×718 가로 strip
   imageWidth: 4096,
   imageHeight: 718,
+  reviewUrl: "https://a-part.co.kr/bankruptcy/client-reviews", // 후기 사진 클릭 시 이동
 };
 
 // ── 00. 최상단 띠배너 (다크 바 + 노란 문의하기 버튼) ──────
 export const topBar = {
-  textBefore: "개인회생, 혼자 고민하지 마세요. ",
+  textBefore: "개인회생, 혼자 고민하지 마세요.",
   highlight: "김훈찬 변호사",
   textAfter: "가 끝까지 함께합니다.",
   buttonText: "문의하기",

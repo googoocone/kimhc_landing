@@ -7,6 +7,7 @@ import StickyConsultBar from "@/components/StickyConsultBar";
 import YoutubeCarousel from "@/components/YoutubeCarousel";
 import CountUp from "@/components/CountUp";
 import WorriesAccordion from "@/components/WorriesAccordion";
+import Highlight from "@/components/Highlight";
 import {
   topBar,
   worries,
@@ -271,14 +272,9 @@ export default function Home() {
           ))}
           {/* 마지막 문단 (형광펜 강조) */}
           <p className="mt-6 text-center text-lg leading-relaxed text-black/80 sm:text-2xl">
-            <span
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(139,92,246,0.5) 50%, transparent 50%)",
-              }}
-            >
+            <Highlight color="rgba(139,92,246,0.5)">
               {correction.body2Highlight}
-            </span>
+            </Highlight>
             {correction.body2After}
           </p>
 
@@ -304,14 +300,9 @@ export default function Home() {
             {chat.body1}
           </p>
           <p className="mt-6 text-center text-lg leading-relaxed text-black/80 sm:text-2xl">
-            <span
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(96,165,250,0.5) 50%, transparent 50%)",
-              }}
-            >
+            <Highlight color="rgba(96,165,250,0.5)">
               {chat.body2Highlight}
-            </span>
+            </Highlight>
             {chat.body2After1}
             <br className="sm:hidden" />{" "}
             {chat.body2After2}
@@ -343,14 +334,9 @@ export default function Home() {
           {/* 본문 (한 줄, "변제금은 달라집니다."에 노란 형광펜) */}
           <p className="mt-10 text-center text-lg leading-relaxed text-black/80 sm:mt-14 sm:text-2xl">
             {assetDefense.body1}
-            <span
-              style={{
-                background:
-                  "linear-gradient(to top, rgba(252,211,77,0.5) 50%, transparent 50%)",
-              }}
-            >
+            <Highlight color="rgba(252,211,77,0.5)">
               {assetDefense.bodyUnderline}
-            </span>
+            </Highlight>
           </p>
 
           {/* 재산방어 비교 카드 (코드로 구현) */}
@@ -447,16 +433,26 @@ export default function Home() {
         <div className="mt-12 w-full overflow-hidden pb-16 sm:mt-16 sm:pb-24">
           <div className="marquee-track flex w-max">
             {[0, 1].map((n) => (
-              <Image
+              <a
                 key={n}
-                src={reviews.image}
-                alt={n === 0 ? "의뢰인 자필 후기 모음" : ""}
+                href={reviews.reviewUrl}
+                target="_blank"
+                rel="noreferrer"
                 aria-hidden={n === 1}
-                width={reviews.imageWidth}
-                height={reviews.imageHeight}
-                className="h-[240px] w-auto max-w-none sm:h-[400px]"
-                priority={false}
-              />
+                aria-label="의뢰인 자필 후기 전체 보기"
+                data-track="review_image"
+                className="block cursor-pointer"
+              >
+                <Image
+                  src={reviews.image}
+                  alt={n === 0 ? "의뢰인 자필 후기 모음" : ""}
+                  aria-hidden={n === 1}
+                  width={reviews.imageWidth}
+                  height={reviews.imageHeight}
+                  className="h-[240px] w-auto max-w-none sm:h-[400px]"
+                  priority={false}
+                />
+              </a>
             ))}
           </div>
         </div>
