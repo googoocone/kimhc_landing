@@ -81,9 +81,7 @@ export default function Home() {
           <p className="text-left text-xs font-medium leading-snug sm:text-sm">
             {topBar.textBefore}
             <br />
-            <span className="font-semibold text-amber-400">
-              {topBar.highlight}
-            </span>
+            <span className="font-bold text-white">{topBar.highlight}</span>
             {topBar.textAfter}
           </p>
           <a

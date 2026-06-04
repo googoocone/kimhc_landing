@@ -32,6 +32,7 @@ export default function StickyConsultBar({
   const [category, setCategory] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
   const [showConsent, setShowConsent] = useState(false);
+  const [showFab, setShowFab] = useState(false); // 스크롤 내리면 전화상담 FAB 등장
 
   const formatPhone = (v: string) => {
     const d = v.replace(/\D/g, "").slice(0, 11);
@@ -92,6 +93,14 @@ export default function StickyConsultBar({
       document.body.style.overflow = "";
     };
   }, [showConsent]);
+
+  // 스크롤 300px 넘으면 전화상담 FAB 슥 등장 (히어로/띠배너 지난 뒤)
+  useEffect(() => {
+    const onScroll = () => setShowFab(window.scrollY > 300);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const fieldBox = "flex items-center gap-2 rounded-md bg-white px-3 py-2.5";
   const fieldLabel = "whitespace-nowrap text-sm font-bold text-gray-800";
@@ -193,7 +202,11 @@ export default function StickyConsultBar({
         data-track="phone_call"
         data-track-meta='{"loc":"fab"}'
         aria-label="전화상담"
-        className="fixed bottom-24 right-4 z-50 flex items-center gap-2 rounded-full bg-[#1e3a5f] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-black/30 transition hover:bg-[#274b73] lg:hidden"
+        className={`fixed bottom-24 right-4 z-50 flex items-center gap-2 rounded-full bg-[#1e3a5f] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-black/30 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-[#274b73] lg:hidden ${
+          showFab
+            ? "translate-y-0 opacity-100"
+            : "pointer-events-none translate-y-4 opacity-0"
+        }`}
       >
         <svg
           width="18"
