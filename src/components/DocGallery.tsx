@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 
 /* 이미지 갤러리 (의견서·카톡 캡처 등 공용)
    - variant="slider": 좌우 슬라이드(캐러셀) — 화살표/스와이프/드래그
@@ -49,7 +50,10 @@ export default function DocGallery({
   const Thumb = ({ src, i, className }: { src: string; i: number; className: string }) => (
     <button
       type="button"
-      onClick={() => setOpenIndex(i)}
+      onClick={() => {
+        track("click", { id: "doc_zoom", label, index: i + 1 });
+        setOpenIndex(i);
+      }}
       className={`group cursor-zoom-in ${className}`}
       aria-label={`${label} ${i + 1} 크게 보기`}
     >

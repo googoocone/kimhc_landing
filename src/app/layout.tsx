@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/content";
+import Analytics from "@/components/Analytics";
 
 // 디자인 기본 폰트: Inter (Figma 스펙). 한글 글자는 Noto Sans KR 로 자동 폴백.
 const inter = Inter({
@@ -51,7 +52,10 @@ export default function RootLayout({
       lang="ko"
       className={`${inter.variable} ${notoSansKr.variable} antialiased`}
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

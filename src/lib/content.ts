@@ -182,6 +182,15 @@ export const reviews = {
   imageHeight: 718,
 };
 
+// ── 00. 최상단 띠배너 (다크 바 + 노란 문의하기 버튼) ──────
+export const topBar = {
+  textBefore: "개인회생, 혼자 고민하지 마세요. ",
+  highlight: "김훈찬 변호사",
+  textAfter: "가 끝까지 함께합니다.",
+  buttonText: "문의하기",
+  phone: "02-421-0508",
+};
+
 // ── 10. 상담 신청 폼 + 푸터 ───────────────────────────────
 export const contact = {
   heading: "개인회생 무료 상담 신청",
@@ -218,11 +227,11 @@ export const footer = {
   ],
   hours: "업무시간 평일 10:00~18:00 (야간 및 주말 상담 별도 문의)",
   phoneLabel: "전화상담",
-  phone: "02.421.0508",
+  phone: "02-421-0508",
   phoneNote: "(주중 10시~18시)",
   blocks: [
     { icon: "memo", label: "365일 24시간", title: "상담신청서 접수" },
-    { icon: "person", label: "주중 10시 ~ 18시", title: "02.421.0508" },
+    { icon: "person", label: "주중 10시 ~ 18시", title: "02-421-0508" },
   ],
 };
 

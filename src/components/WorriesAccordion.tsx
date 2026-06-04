@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 
 type Item = { q: string; a: string };
 
@@ -52,7 +53,10 @@ export default function WorriesAccordion({ items }: { items: Item[] }) {
             {/* 질문 (헤더) */}
             <button
               type="button"
-              onClick={() => setOpen(isOpen ? null : i)}
+              onClick={() => {
+                if (!isOpen) track("click", { id: "faq_open", index: i + 1, q: item.q });
+                setOpen(isOpen ? null : i);
+              }}
               aria-expanded={isOpen}
               className="flex w-full items-center gap-4 px-5 py-5 text-left sm:gap-6 sm:px-8 sm:py-6"
             >

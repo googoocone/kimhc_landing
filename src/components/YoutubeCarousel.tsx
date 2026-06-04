@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track } from "@/lib/analytics";
 
 /* 유튜브 썸네일 캐러셀
    - PC(lg↑): 한 화면에 3개 / 모바일: 1개
@@ -51,6 +52,9 @@ export default function YoutubeCarousel({ thumbs }: { thumbs: Thumb[] }) {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`유튜브 영상 ${i + 1} 보기`}
+                onClick={() =>
+                  track("click", { id: "youtube_thumb", index: i + 1, href: t.href })
+                }
                 className="relative block aspect-video w-full overflow-hidden rounded-xl bg-gray-100 shadow-sm ring-1 ring-black/5 transition hover:shadow-md hover:ring-black/10"
               >
                 <span className="absolute inset-0 flex items-center justify-center text-sm text-gray-400">

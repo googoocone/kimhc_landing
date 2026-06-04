@@ -1,17 +1,44 @@
 /* 개인회생 상담 신청 접수 API (POST /api/consult)
-   폼에서 { name, phone } 을 받아 처리합니다.
+   폼에서 { name, phone, category, attribution } 을 받아
+   외부 커넥터(SheetDB)를 통해 기존 마스터 구글 시트의 해당 탭에 한 줄 추가합니다.
 
-   ⚠️ 지금은 서버 로그(콘솔)에만 남깁니다. Vercel 배포 시
-   Functions 로그에서 확인 가능하지만, 실제 운영에서는 아래 TODO 위치에
-   "신청 내용을 받을 방법"을 연결해야 합니다. (이메일 / 구글시트 / 슬랙 / 알림톡 / DB 등) */
+   - 커넥터 엔드포인트는 환경변수 SHEET_API_URL 로 설정 (탭 지정은 URL의 ?sheet=탭이름).
+   - SheetDB 는 JSON 의 키를 시트 "열 제목"과 매칭해 행을 추가하므로,
+     시트 1행 헤더가 [타임스탬프 | 성명 | 연락처 | 상담항목 | 특이사항] 이어야 함.
+   - 미설정(로컬) 시 콘솔에만 기록. (google-sheet-연동.md 참고) */
+
+export const dynamic = "force-dynamic";
+
+const str = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
+
+// 통합시트는 날짜/시간/요일이 분리돼 있어 각각 한국시간(KST)으로 생성
+const SEOUL = "Asia/Seoul";
+const kstDate = (d: Date): string =>
+  new Intl.DateTimeFormat("sv-SE", {
+    timeZone: SEOUL,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d); // 2026-06-04
+const kstTime = (d: Date): string =>
+  new Intl.DateTimeFormat("en-GB", {
+    timeZone: SEOUL,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(d); // 18:15
+const kstWeekday = (d: Date): string =>
+  new Intl.DateTimeFormat("ko-KR", {
+    timeZone: SEOUL,
+    weekday: "short",
+  }).format(d); // 목
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const name = typeof body?.name === "string" ? body.name.trim() : "";
-    const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
-    const category =
-      typeof body?.category === "string" ? body.category.trim() : "";
+    const name = str(body?.name);
+    const phone = str(body?.phone);
+    const category = str(body?.category);
 
     // 기본 검증
     if (!name || phone.replace(/\D/g, "").length < 10) {
@@ -21,17 +48,46 @@ export async function POST(request: Request) {
       );
     }
 
-    // ──────────────────────────────────────────────
-    // TODO: 신청 내용을 받을 방법을 여기에 연결하세요.
-    //   예) 이메일 발송(Resend), 구글시트 기록, 슬랙/카카오 알림톡, DB 저장 등
-    // 지금은 서버 로그로만 남깁니다.
-    console.log("[상담신청]", {
-      name,
-      phone,
-      category,
-      at: new Date().toISOString(),
-    });
-    // ──────────────────────────────────────────────
+    // 통합시트 열 제목과 1:1 매칭 (없는 열은 비워둠 = 사무실에서 채우는 칸)
+    const now = new Date();
+    const row = {
+      날짜: kstDate(now),
+      시간: kstTime(now),
+      요일: kstWeekday(now),
+      "1차 유입경로": "홈페이지, 전화", // 홈페이지 뷰 탭에 걸러져 보이도록
+      성명: name,
+      연락처: phone,
+      상담항목: category,
+      특이사항: "김훈찬변호사님 렌딩",
+    };
+
+    const apiUrl = process.env.SHEET_API_URL;
+    if (!apiUrl) {
+      console.log("[상담신청]", row);
+      return Response.json({ ok: true });
+    }
+
+    // 기록할 탭 지정 (SHEET_TAB). 미설정 시 SheetDB 기본(첫) 탭.
+    const tab = process.env.SHEET_TAB;
+    const target = tab
+      ? `${apiUrl}?sheet=${encodeURIComponent(tab)}`
+      : apiUrl;
+
+    try {
+      const res = await fetch(target, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: row }),
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!res.ok) throw new Error(`sheet api responded ${res.status}`);
+    } catch (err) {
+      console.error("[상담신청] 시트 기록 실패:", err);
+      return Response.json(
+        { ok: false, error: "전송에 실패했습니다. 잠시 후 다시 시도해 주세요." },
+        { status: 502 },
+      );
+    }
 
     return Response.json({ ok: true });
   } catch {

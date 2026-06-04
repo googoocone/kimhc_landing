@@ -8,6 +8,7 @@ import YoutubeCarousel from "@/components/YoutubeCarousel";
 import CountUp from "@/components/CountUp";
 import WorriesAccordion from "@/components/WorriesAccordion";
 import {
+  topBar,
   worries,
   lawyerIntro,
   differentiators,
@@ -73,9 +74,32 @@ function MobileBreakText({ text }: { text: string }) {
 
 export default function Home() {
   return (
-    <main className="w-full overflow-x-hidden bg-white pb-[164px] sm:pb-[120px]">
+    <main className="w-full overflow-x-hidden bg-white pb-[100px] sm:pb-[110px]">
+      {/* ───── 00. 최상단 띠배너 (전화 문의 CTA) ───── */}
+      <div className="w-full bg-[#2b2b2b] text-white">
+        <div className="mx-auto flex max-w-[1220px] items-center justify-between gap-3 px-4 py-2.5 sm:px-8">
+          <p className="text-left text-xs font-medium leading-snug sm:text-sm">
+            {topBar.textBefore}
+            <br />
+            <span className="font-semibold text-amber-400">
+              {topBar.highlight}
+            </span>
+            {topBar.textAfter}
+          </p>
+          <a
+            href={`tel:${topBar.phone}`}
+            data-track="phone_call"
+            data-track-meta='{"loc":"top_banner"}'
+            className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#1e3a5f] px-3 py-1.5 text-xs font-bold text-white transition hover:bg-[#274b73] sm:px-4 sm:text-sm"
+          >
+            {topBar.buttonText}
+            <span aria-hidden>›</span>
+          </a>
+        </div>
+      </div>
+
       {/* ───── 01. 메인 영상 섹션 (full-bleed 자동재생 영상) ───── */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="01_hero_video">
         <video
           src="/video.mp4"
           className="h-auto w-full object-cover"
@@ -89,7 +113,7 @@ export default function Home() {
 
       {/* ───── 02. "걱정되는 부분" Q&A 섹션 ─────
           배경 stone-50 / 인트로 문구 + 큰 제목 + 01~04 질문 카드 */}
-      <section className="bg-stone-50">
+      <section className="bg-stone-50" data-section="02_worries">
         <Wrap className="py-16 sm:py-24">
           {/* 인트로 문구 */}
           <p className="whitespace-pre-line text-center leading-relaxed text-black">
@@ -123,7 +147,7 @@ export default function Home() {
 
       {/* ───── 03. 대표 변호사 소개 섹션 ─────
           왼쪽: 인사말 텍스트 / 오른쪽: slate 카드 + 변호사 사진 + 네임 */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="03_lawyer_intro">
         <Wrap className="py-16 sm:py-24">
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-8">
             {/* 왼쪽 텍스트 */}
@@ -175,7 +199,7 @@ export default function Home() {
 
       {/* ───── 04. 김훈찬 변호사의 5가지 차별점 ─────
           위 2개 + 아래 3개 카드. 각 카드: 제목 + 설명 + 아이콘(우하단) */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="04_differentiators">
         <Wrap className="py-16 sm:py-24">
           {/* 세로 라인 + 작은 라벨 + 제목 */}
           <div className="mx-auto h-14 w-px bg-black" />
@@ -224,7 +248,7 @@ export default function Home() {
 
       {/* ───── 05. 보정 대응 섹션 ─────
           제목 + 본문(형광펜 강조) + 의견서/보정서 이미지 4장 */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="05_correction">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 (모바일: 번호 위로 + "보정 대응이" 뒤 줄바꿈) */}
           <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
@@ -267,7 +291,7 @@ export default function Home() {
 
       {/* ───── 06. 1:1 전담 담당자 배정 섹션 ─────
           제목 + 본문(파란 형광펜) + 카톡 캡처 슬라이드 */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="06_chat">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 */}
           <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
@@ -308,7 +332,7 @@ export default function Home() {
 
       {/* ───── 07. 의뢰인 재산방어 시스템 섹션 ─────
           제목 + 본문(노란 형광펜) + 가로 배너 이미지 */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="07_asset_defense">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 */}
           <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
@@ -341,7 +365,7 @@ export default function Home() {
 
       {/* ───── 08. 변호사 수임료 섹션 ─────
           제목 + 본문 + 표(코드) + ※ 안내박스(코드, ①②③ 동그라미) */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="08_fee">
         <Wrap className="py-16 sm:py-24">
           {/* 제목 ("합리적인" 뒤 줄바꿈) */}
           <h2 className="text-center text-3xl font-medium leading-tight text-black sm:text-5xl">
@@ -407,7 +431,7 @@ export default function Home() {
 
       {/* ───── 09. 자필 후기 섹션 (가로 무한 스크롤) ─────
           제목 + 본문(1220 안) + 화면 전체 marquee */}
-      <section className="bg-neutral-100/50">
+      <section className="bg-neutral-100/50" data-section="09_reviews">
         <Wrap className="pt-16 sm:pt-24">
           {/* 제목 */}
           <h2 className="text-center text-3xl font-normal leading-tight text-black sm:text-5xl sm:leading-[64px]">
@@ -441,7 +465,7 @@ export default function Home() {
       </section>
 
       {/* ───── 11. 유튜브 섹션 (썸네일 12칸 캐러셀) ───── */}
-      <section className="bg-white">
+      <section className="bg-white" data-section="10_youtube">
         <Wrap className="py-16 sm:py-24">
           {/* 상단 텍스트 이미지 */}
           <div className="flex justify-center">
@@ -467,6 +491,7 @@ export default function Home() {
               href={youtube.channelUrl}
               target="_blank"
               rel="noreferrer"
+              data-track="youtube_channel"
               className="rounded-[10px] bg-red-600 px-10 py-3.5 text-xl font-medium text-white transition hover:bg-red-700"
             >
               {youtube.channelText}

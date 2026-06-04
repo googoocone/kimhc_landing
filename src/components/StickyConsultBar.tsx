@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { track, getAttribution } from "@/lib/analytics";
 
 /* 화면 하단 고정 상담 신청 바
    - 이름 / 연락처 / 상담분야 + 상담신청
@@ -45,19 +46,27 @@ export default function StickyConsultBar({
     if (!name.trim()) return alert("이름을 입력해 주세요.");
     if (tel.replace(/\D/g, "").length < 10)
       return alert("올바른 연락처를 입력해 주세요.");
+    track("consult_form_open", { category }); // 동의 팝업까지 도달 = 신청 의향
     setShowConsent(true);
   };
 
   // 팝업에서 동의 → 전송
   const onAgree = async () => {
     setStatus("loading");
+    const attribution = getAttribution(); // 이 사람을 데려온 광고/키워드
     try {
       const res = await fetch("/api/consult", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), phone: tel, category }),
+        body: JSON.stringify({
+          name: name.trim(),
+          phone: tel,
+          category,
+          attribution, // 상담 접수에도 유입 광고 동봉 → 구글시트에서 함께 확인
+        }),
       });
       if (!res.ok) throw new Error();
+      track("consult_submit", { category, attribution }); // 최종 전환 + 유입 광고
       setShowConsent(false);
       setStatus("success");
       setName("");
@@ -114,19 +123,21 @@ export default function StickyConsultBar({
               <form className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-3">
                 <a
                   href={`tel:${phone}`}
-                  className="hidden shrink-0 leading-tight lg:block"
+                  data-track="phone_call"
+                  data-track-meta='{"loc":"consult_bar"}'
+                  className="hidden shrink-0 items-center gap-2 leading-tight lg:flex lg:justify-start"
                 >
-                  <span className="block text-xs text-white/70">
-                    {phoneLabel}
+                  <span className="text-base font-bold text-amber-400">
+                    즉시 상담
                   </span>
-                  <span className="block text-2xl font-extrabold tracking-tight">
+                  <span className="text-2xl font-extrabold tracking-tight">
                     {phone}
                   </span>
                 </a>
 
                 <div className="flex gap-2 lg:contents">
                   <div className={`${fieldBox} flex-1`}>
-                    <span className={fieldLabel}>이름</span>
+                    <span className={`${fieldLabel} hidden lg:inline`}>이름</span>
                     <input
                       type="text"
                       value={name}
@@ -136,7 +147,7 @@ export default function StickyConsultBar({
                     />
                   </div>
                   <div className={`${fieldBox} flex-1`}>
-                    <span className={fieldLabel}>연락처</span>
+                    <span className={`${fieldLabel} hidden lg:inline`}>연락처</span>
                     <input
                       type="tel"
                       inputMode="numeric"
@@ -146,10 +157,8 @@ export default function StickyConsultBar({
                       className={fieldInput}
                     />
                   </div>
-                </div>
-
-                <div className="flex gap-2 lg:contents">
-                  <div className={`${fieldBox} flex-1`}>
+                  {/* 상담분야: 모바일 숨김, 데스크탑(lg)만 표시 */}
+                  <div className="hidden flex-1 items-center gap-2 rounded-md bg-white px-3 py-2.5 lg:flex">
                     <span className={fieldLabel}>{categoryLabel}</span>
                     <select
                       value={category}
@@ -167,7 +176,7 @@ export default function StickyConsultBar({
                   <button
                     type="submit"
                     onClick={onRequest}
-                    className="shrink-0 rounded-md bg-blue-600 px-6 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700"
+                    className="shrink-0 whitespace-nowrap rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-bold text-white transition hover:bg-blue-700 sm:px-6"
                   >
                     {submitText}
                   </button>
@@ -177,6 +186,26 @@ export default function StickyConsultBar({
           )}
         </div>
       </div>
+
+      {/* 모바일 전화상담 플로팅 버튼 (데스크탑은 바에 번호가 있어 숨김) */}
+      <a
+        href={`tel:${phone}`}
+        data-track="phone_call"
+        data-track-meta='{"loc":"fab"}'
+        aria-label="전화상담"
+        className="fixed bottom-24 right-4 z-50 flex items-center gap-2 rounded-full bg-[#1e3a5f] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-black/30 transition hover:bg-[#274b73] lg:hidden"
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden
+        >
+          <path d="M6.62 10.79a15.53 15.53 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.24 1.02l-2.2 2.2z" />
+        </svg>
+        전화상담
+      </a>
 
       {/* 개인정보 동의 팝업 */}
       {showConsent && (
