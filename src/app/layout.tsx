@@ -24,9 +24,19 @@ const notoSansKr = Noto_Sans_KR({
 // 검색·카톡/페북 공유 시 보이는 정보. 값은 src/lib/content.ts 에서 수정.
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: site.title,
+  title: {
+    default: site.title,
+    template: `%s | ${site.name}`,
+  },
   description: site.description,
   keywords: site.keywords,
+  applicationName: site.name,
+  authors: [{ name: "김훈찬 변호사" }],
+  creator: site.name,
+  publisher: site.name,
+  alternates: { canonical: "/" },
+  category: "법률",
+  formatDetection: { telephone: true },
   openGraph: {
     title: site.title,
     description: site.description,
@@ -34,13 +44,24 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: site.ogImage,
+        alt: "개인회생 변호사 김훈찬 — 법무법인 에이파트 회생파산센터",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: site.title,
     description: site.description,
+    images: [site.ogImage],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({

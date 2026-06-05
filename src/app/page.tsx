@@ -8,6 +8,7 @@ import YoutubeCarousel from "@/components/YoutubeCarousel";
 import CountUp from "@/components/CountUp";
 import WorriesAccordion from "@/components/WorriesAccordion";
 import Highlight from "@/components/Highlight";
+import StructuredData from "@/components/StructuredData";
 import {
   topBar,
   worries,
@@ -76,6 +77,12 @@ function MobileBreakText({ text }: { text: string }) {
 export default function Home() {
   return (
     <main className="w-full overflow-x-hidden bg-white pb-[100px] sm:pb-[110px]">
+      {/* 검색엔진용: 페이지 대표 제목(h1) + 구조화 데이터 */}
+      <h1 className="sr-only">
+        개인회생 변호사 김훈찬 — 법무법인 에이파트 회생파산센터 (서울 송파)
+      </h1>
+      <StructuredData />
+
       {/* ───── 00. 최상단 띠배너 (전화 문의 CTA) ───── */}
       <div className="w-full bg-[#2b2b2b] text-white">
         <div className="mx-auto flex max-w-[1220px] items-center justify-between gap-3 px-4 py-2.5 sm:px-8 lg:justify-center lg:gap-5">
