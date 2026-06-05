@@ -44,18 +44,11 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "ko_KR",
     type: "website",
-    images: [
-      {
-        url: site.ogImage,
-        alt: "개인회생 변호사 김훈찬 — 법무법인 에이파트 회생파산센터",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: site.title,
     description: site.description,
-    images: [site.ogImage],
   },
   robots: {
     index: true,

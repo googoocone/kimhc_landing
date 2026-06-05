@@ -114,6 +114,8 @@ export default function Home() {
           loop
           muted
           playsInline
+          preload="metadata"
+          aria-label="법무법인 에이파트 개인회생 소개 영상"
         />
       </section>
 
@@ -182,7 +184,7 @@ export default function Home() {
                 {/* 변호사 사진 (앞, 하단 정렬) */}
                 <Image
                   src={lawyerIntro.photo}
-                  alt={`${lawyerIntro.role} ${lawyerIntro.name}`}
+                  alt={`개인회생 전문 ${lawyerIntro.role} ${lawyerIntro.name}`}
                   width={325}
                   height={545}
                   priority
@@ -286,7 +288,7 @@ export default function Home() {
           </p>
 
           {/* 의견서/보정서 이미지 4장 (클릭 시 확대) */}
-          <DocGallery docs={correction.docs} />
+          <DocGallery docs={correction.docs} label="개인회생 의견서·보정서 사례" />
         </Wrap>
       </section>
 
@@ -320,7 +322,7 @@ export default function Home() {
             docs={chat.images}
             width={300}
             height={736}
-            label="상담 채팅 화면"
+            label="개인회생 1:1 상담 채팅 화면"
             variant="zigzag"
           />
         </Wrap>
@@ -452,7 +454,7 @@ export default function Home() {
               >
                 <Image
                   src={reviews.image}
-                  alt={n === 0 ? "의뢰인 자필 후기 모음" : ""}
+                  alt={n === 0 ? "개인회생 의뢰인 자필 후기 모음" : ""}
                   aria-hidden={n === 1}
                   width={reviews.imageWidth}
                   height={reviews.imageHeight}

@@ -39,6 +39,32 @@ export default function StructuredData() {
     knowsAbout: ["개인회생", "개인파산", "면책", "채무조정", "법인회생"],
   };
 
+  const organization = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: site.name,
+    url: site.url,
+    logo: `${site.url}${site.ogImage}`,
+    image: `${site.url}${site.ogImage}`,
+    telephone: site.telephone,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: site.address.street,
+      addressLocality: site.address.locality,
+      addressRegion: site.address.region,
+      addressCountry: site.address.country,
+    },
+  };
+
+  const services = ["개인회생", "개인파산", "면책", "채무조정"].map((s) => ({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    serviceType: s,
+    name: `${s} 법률 상담 및 진행`,
+    provider: { "@type": "LegalService", name: site.name, url: site.url },
+    areaServed: { "@type": "Country", name: "대한민국" },
+  }));
+
   const faq = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -49,16 +75,17 @@ export default function StructuredData() {
     })),
   };
 
+  const schemas = [legalService, organization, ...services, faq];
+
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(legalService) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
-      />
+      {schemas.map((schema, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        />
+      ))}
     </>
   );
 }

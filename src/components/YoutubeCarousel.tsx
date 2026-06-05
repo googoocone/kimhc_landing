@@ -63,7 +63,7 @@ export default function YoutubeCarousel({ thumbs }: { thumbs: Thumb[] }) {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={t.src}
-                  alt={`유튜브 영상 썸네일 ${i + 1}`}
+                  alt={`개인회생 유튜브 영상 ${i + 1} - 김훈찬 변호사`}
                   loading="lazy"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
