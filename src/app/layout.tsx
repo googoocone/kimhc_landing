@@ -3,6 +3,7 @@ import { Inter, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import { site } from "@/lib/content";
 import Analytics from "@/components/Analytics";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 // 디자인 기본 폰트: Inter (Figma 스펙). 한글 글자는 Noto Sans KR 로 자동 폴백.
 const inter = Inter({
@@ -52,6 +53,7 @@ export default function RootLayout({
       lang="ko"
       className={`${inter.variable} ${notoSansKr.variable} antialiased`}
     >
+      <GoogleTagManager gtmId="GTM-NZPG5FQX" />
       <body>
         {children}
         <Analytics />
