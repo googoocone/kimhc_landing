@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { track, getAttribution } from "@/lib/analytics";
+import {
+  track,
+  getAttribution,
+  reportConversion,
+  ADS_CONVERSIONS,
+} from "@/lib/analytics";
 
 /* 화면 하단 고정 상담 신청 바
    - 이름 / 연락처 / 상담분야 + 상담신청
@@ -68,6 +73,7 @@ export default function StickyConsultBar({
       });
       if (!res.ok) throw new Error();
       track("consult_submit", { category, attribution }); // 최종 전환 + 유입 광고
+      reportConversion(ADS_CONVERSIONS.consult_submit); // 구글애즈 전환(상담신청제출)
       setShowConsent(false);
       setStatus("success");
       setName("");

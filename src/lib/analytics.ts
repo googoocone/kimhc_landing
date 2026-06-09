@@ -161,3 +161,28 @@ export function track(type: string, meta: Record<string, unknown> = {}): void {
     /* 추적 실패가 사이트 동작을 막지 않도록 무시 */
   }
 }
+
+/* ── 구글애즈 전환 추적 (AW-11303513193) ──────────────────
+   각 행동(클릭 id / 상담제출)을 구글애즈 전환 액션과 1:1 매핑. */
+export const ADS_CONVERSIONS: Record<string, string> = {
+  youtube_channel: "AW-11303513193/X8wxCPj4h7kcEOnY940q", // 유튜브버튼
+  review_image: "AW-11303513193/izPTCICKiLkcEOnY940q", // 자필후기
+  phone_call: "AW-11303513193/etgiCMLjm7kcEOnY940q", // 전화상담
+  consult_submit: "AW-11303513193/p9TlCKqSnbkcEOnY940q", // 상담신청제출
+};
+
+type GtagWindow = Window & {
+  gtag?: (...args: unknown[]) => void;
+};
+
+export function reportConversion(sendTo: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    const g = (window as GtagWindow).gtag;
+    if (typeof g === "function") {
+      g("event", "conversion", { send_to: sendTo });
+    }
+  } catch {
+    /* 전환 전송 실패가 사이트 동작을 막지 않도록 무시 */
+  }
+}

@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-import { track, getDevice, captureAttribution, currentUtm } from "@/lib/analytics";
+import {
+  track,
+  getDevice,
+  captureAttribution,
+  currentUtm,
+  reportConversion,
+  ADS_CONVERSIONS,
+} from "@/lib/analytics";
 
 /* 전역 자동 추적기 (layout 에 한 번 마운트)
    자동으로 잡는 행동:
@@ -82,6 +89,9 @@ export default function Analytics() {
         }
       }
       track("click", { id, ...meta });
+      // 구글애즈 전환 (유튜브 채널 / 후기 사진 / 전화)
+      const conv = ADS_CONVERSIONS[id];
+      if (conv) reportConversion(conv);
     };
     document.addEventListener("click", onClick, true);
 
