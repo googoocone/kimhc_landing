@@ -4,6 +4,7 @@ import "./globals.css";
 import { site } from "@/lib/content";
 import Analytics from "@/components/Analytics";
 import { GoogleTagManager } from "@next/third-parties/google";
+import Script from "next/script";
 
 // 디자인 기본 폰트: Inter (Figma 스펙). 한글 글자는 Noto Sans KR 로 자동 폴백.
 const inter = Inter({
@@ -71,6 +72,18 @@ export default function RootLayout({
       <body>
         {children}
         <Analytics />
+
+        {/* 구글애즈 전역 태그(gtag.js) — AW-11303513193 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-11303513193"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-gtag" strategy="afterInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'AW-11303513193');`}
+        </Script>
       </body>
     </html>
   );
