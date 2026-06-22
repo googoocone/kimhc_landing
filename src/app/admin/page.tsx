@@ -150,7 +150,7 @@ function Dashboard({ stats }: { stats: Stats }) {
       <div className="grid gap-4 lg:grid-cols-2">
         {/* 일자별 방문 추이 */}
         <Card title="일자별 방문 추이">
-          <DayBars data={stats.byDay} />
+          <DayChart data={stats.byDay} />
         </Card>
 
         {/* 유입경로 */}
@@ -298,30 +298,107 @@ function BarList({
   );
 }
 
-function DayBars({ data }: { data: { date: string; count: number }[] }) {
+function DayChart({ data }: { data: { date: string; count: number }[] }) {
   if (data.length === 0) {
     return <p className="text-sm text-slate-400">데이터 없음</p>;
   }
+  const W = 760;
+  const H = 200;
+  const pad = { top: 18, right: 14, bottom: 30, left: 34 };
+  const innerW = W - pad.left - pad.right;
+  const innerH = H - pad.top - pad.bottom;
   const max = Math.max(...data.map((d) => d.count), 1);
+  const n = data.length;
+  const x = (i: number) =>
+    pad.left + (n === 1 ? innerW / 2 : (i / (n - 1)) * innerW);
+  const y = (v: number) => pad.top + innerH - (v / max) * innerH;
+
+  const pts = data.map((d, i) => [x(i), y(d.count)] as const);
+  const line = pts
+    .map((p, i) => `${i === 0 ? "M" : "L"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`)
+    .join(" ");
+  const area = `${line} L${x(n - 1).toFixed(1)} ${(pad.top + innerH).toFixed(
+    1,
+  )} L${x(0).toFixed(1)} ${(pad.top + innerH).toFixed(1)} Z`;
+  const labelEvery = Math.max(1, Math.ceil(n / 8));
+
   return (
-    <div className="flex h-40 items-end gap-1 overflow-x-auto">
-      {data.map((d) => (
-        <div
-          key={d.date}
-          className="flex min-w-[28px] flex-1 flex-col items-center gap-1"
-        >
-          <span className="text-[10px] font-semibold text-slate-500">
-            {d.count}
-          </span>
-          <div
-            className="w-full rounded-t bg-sky-500"
-            style={{ height: `${Math.max((d.count / max) * 100, 3)}%` }}
-            title={`${d.date}: ${d.count}`}
-          />
-          <span className="text-[9px] text-slate-400">{d.date.slice(5)}</span>
-        </div>
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full">
+      <defs>
+        <linearGradient id="dayGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0ea5e9" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* 가로 기준선 (0 / 중간 / 최대) */}
+      {[0, 0.5, 1].map((t) => {
+        const gy = pad.top + innerH - t * innerH;
+        return (
+          <g key={t}>
+            <line
+              x1={pad.left}
+              y1={gy}
+              x2={W - pad.right}
+              y2={gy}
+              stroke="#e2e8f0"
+              strokeWidth="1"
+            />
+            <text x={pad.left - 6} y={gy + 3} fontSize="10" textAnchor="end" fill="#94a3b8">
+              {Math.round(t * max)}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* 영역 + 선 */}
+      <path d={area} fill="url(#dayGrad)" />
+      <path
+        d={line}
+        fill="none"
+        stroke="#0ea5e9"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      />
+
+      {/* 점 + 값 */}
+      {pts.map((p, i) => (
+        <g key={i}>
+          <circle cx={p[0]} cy={p[1]} r="3" fill="#0ea5e9">
+            <title>{`${data[i].date}: ${data[i].count}`}</title>
+          </circle>
+          {(n <= 14 || i % labelEvery === 0) && (
+            <text
+              x={p[0]}
+              y={p[1] - 8}
+              fontSize="10"
+              textAnchor="middle"
+              fill="#0369a1"
+              fontWeight="600"
+            >
+              {data[i].count}
+            </text>
+          )}
+        </g>
       ))}
-    </div>
+
+      {/* x축 날짜 */}
+      {data.map((d, i) =>
+        i % labelEvery === 0 ? (
+          <text
+            key={d.date}
+            x={x(i)}
+            y={H - 8}
+            fontSize="10"
+            textAnchor="middle"
+            fill="#94a3b8"
+          >
+            {d.date.slice(5)}
+          </text>
+        ) : null,
+      )}
+    </svg>
   );
 }
 
