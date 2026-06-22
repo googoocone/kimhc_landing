@@ -3,6 +3,8 @@ import { isAuthed } from "@/lib/admin-auth";
 import { getStats, RANGES, type RangeKey, type Stats } from "@/lib/dashboard";
 import AdminLogin from "./AdminLogin";
 import LogoutButton from "./LogoutButton";
+import JourneyList from "./JourneyList";
+import LeadsList from "./LeadsList";
 
 export const dynamic = "force-dynamic"; // 항상 최신 데이터
 
@@ -120,7 +122,7 @@ function Dashboard({ stats }: { stats: Stats }) {
         title="전환자 동선 (상담신청·전화까지 경로)"
         sub="전환한 사람이 어느 섹션을 거쳐 무엇을 클릭하고 전환했는지 (최근순)"
       >
-        <Journeys rows={stats.journeys} />
+        <JourneyList rows={stats.journeys} />
       </Card>
 
       {/* ★ 광고 → 상담 전환 (캠페인/키워드별) */}
@@ -144,7 +146,7 @@ function Dashboard({ stats }: { stats: Stats }) {
         title="상담 신청자별 유입 내역"
         sub="누가 어느 광고·키워드로 들어와 신청했는지 (최근순)"
       >
-        <Leads rows={stats.conversions} />
+        <LeadsList rows={stats.conversions} />
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -402,14 +404,6 @@ function DayChart({ data }: { data: { date: string; count: number }[] }) {
   );
 }
 
-const kstTime = new Intl.DateTimeFormat("ko-KR", {
-  timeZone: "Asia/Seoul",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
 function PerfTable({
   rows,
   firstCol,
@@ -458,126 +452,6 @@ function PerfTable({
           ))}
         </tbody>
       </table>
-    </div>
-  );
-}
-
-function Leads({
-  rows,
-}: {
-  rows: {
-    at: string;
-    source: string;
-    campaign: string;
-    keyword: string;
-    category: string;
-    device: string;
-  }[];
-}) {
-  if (rows.length === 0) {
-    return <p className="text-sm text-slate-400">아직 상담 신청이 없습니다.</p>;
-  }
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full whitespace-nowrap text-sm">
-        <thead>
-          <tr className="border-b border-slate-200 text-left text-xs text-slate-400">
-            <th className="pb-2 pr-4 font-medium">신청시각</th>
-            <th className="pb-2 pr-4 font-medium">유입</th>
-            <th className="pb-2 pr-4 font-medium">캠페인</th>
-            <th className="pb-2 pr-4 font-medium">키워드</th>
-            <th className="pb-2 pr-4 font-medium">상담분야</th>
-            <th className="pb-2 font-medium">기기</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r, i) => (
-            <tr key={i} className="border-b border-slate-100 last:border-0">
-              <td className="py-2 pr-4 text-slate-500">
-                {kstTime.format(new Date(r.at))}
-              </td>
-              <td className="py-2 pr-4 font-medium text-slate-700">{r.source}</td>
-              <td className="py-2 pr-4 text-slate-600">{r.campaign}</td>
-              <td className="py-2 pr-4 font-semibold text-slate-800">
-                {r.keyword}
-              </td>
-              <td className="py-2 pr-4 text-slate-600">{r.category}</td>
-              <td className="py-2 text-slate-500">{r.device}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-function durLabel(sec: number): string {
-  if (sec >= 60) return `${Math.floor(sec / 60)}분 ${sec % 60}초`;
-  return `${sec}초`;
-}
-
-function Journeys({
-  rows,
-}: {
-  rows: {
-    at: string;
-    type: string;
-    source: string;
-    device: string;
-    durationSec: number;
-    steps: { label: string; at: number }[];
-  }[];
-}) {
-  if (rows.length === 0) {
-    return (
-      <p className="text-sm text-slate-400">
-        아직 전환(상담신청·전화) 동선 데이터가 없습니다.
-      </p>
-    );
-  }
-  return (
-    <div className="space-y-4">
-      {rows.map((j, i) => (
-        <div key={i} className="border-b border-slate-100 pb-4 last:border-0">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
-            <span
-              className={`rounded px-2 py-0.5 font-semibold ${
-                j.type === "상담신청"
-                  ? "bg-emerald-50 text-emerald-600"
-                  : "bg-sky-50 text-sky-600"
-              }`}
-            >
-              {j.type === "상담신청" ? "상담신청" : "전화"}
-            </span>
-            <span>{kstTime.format(new Date(j.at))}</span>
-            <span>· 유입 {j.source}</span>
-            <span>· {j.device}</span>
-            <span>· 체류 {durLabel(j.durationSec)}</span>
-            <span>· {j.steps.length}단계</span>
-          </div>
-          <div className="mt-2 flex flex-wrap items-center gap-1">
-            {j.steps.map((st, k) => (
-              <span key={k} className="flex items-center gap-1">
-                <span
-                  className={`rounded px-2 py-1 text-xs ${
-                    st.label.startsWith("✅")
-                      ? "bg-emerald-100 font-semibold text-emerald-700"
-                      : st.label === "전화번호 클릭"
-                        ? "bg-sky-100 font-semibold text-sky-700"
-                        : "bg-slate-100 text-slate-600"
-                  }`}
-                  title={`${st.at}초`}
-                >
-                  {st.label}
-                </span>
-                {k < j.steps.length - 1 && (
-                  <span className="text-slate-300">→</span>
-                )}
-              </span>
-            ))}
-          </div>
-        </div>
-      ))}
     </div>
   );
 }
