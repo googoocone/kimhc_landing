@@ -11,27 +11,25 @@ export const dynamic = "force-dynamic";
 
 const str = (v: unknown): string => (typeof v === "string" ? v.trim() : "");
 
-// 통합시트는 날짜/시간/요일이 분리돼 있어 각각 한국시간(KST)으로 생성
-const SEOUL = "Asia/Seoul";
-const kstDate = (d: Date): string =>
-  new Intl.DateTimeFormat("sv-SE", {
-    timeZone: SEOUL,
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(d); // 2026-06-04
-const kstTime = (d: Date): string =>
-  new Intl.DateTimeFormat("en-GB", {
-    timeZone: SEOUL,
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(d); // 18:15
-const kstWeekday = (d: Date): string =>
-  new Intl.DateTimeFormat("ko-KR", {
-    timeZone: SEOUL,
-    weekday: "short",
-  }).format(d); // 목
+// 한국시간 타임스탬프 "2026. 6. 6 오후 8:30:15" (구글폼 기본 형식과 동일)
+const kstTimestamp = (d: Date): string => {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "Asia/Seoul",
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    })
+      .formatToParts(d)
+      .map((x) => [x.type, x.value]),
+  );
+  const ampm = p.dayPeriod === "AM" ? "오전" : "오후";
+  return `${p.year}. ${p.month}. ${p.day} ${ampm} ${p.hour}:${p.minute}:${p.second}`;
+};
 
 export async function POST(request: Request) {
   try {
@@ -48,14 +46,11 @@ export async function POST(request: Request) {
       );
     }
 
-    // 통합시트 열 제목과 1:1 매칭 (없는 열은 비워둠 = 사무실에서 채우는 칸)
+    // 시트 열 제목과 1:1 매칭 (탭에 없는 열은 보내지 않으면 그대로 비어 있음)
+    //   앞에 ' 를 붙여 구글시트가 타임스탬프를 일련번호로 변환하지 않고 텍스트로 저장
     const now = new Date();
     const row = {
-      // 앞에 ' 를 붙여 구글시트가 일련번호로 변환하지 않고 텍스트로 저장하게 함
-      날짜: `'${kstDate(now)}`,
-      시간: `'${kstTime(now)}`,
-      요일: kstWeekday(now),
-      "1차 유입경로": "홈페이지, 전화", // 홈페이지 뷰 탭에 걸러져 보이도록
+      타임스탬프: `'${kstTimestamp(now)}`,
       성명: name,
       연락처: phone,
       상담항목: category,

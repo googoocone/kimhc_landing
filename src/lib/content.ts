@@ -221,7 +221,7 @@ export const contact = {
   barPhoneLabel: "변호사 직접상담",
   phone: "02-421-0508",
   categoryLabel: "상담분야",
-  categories: ["개인회생", "개인파산", "면책", "기타"],
+  categories: ["개인회생", "개인파산", "정하지 못함", "기타"],
   confirmText:
     "번호 오류시 상담이 어려울 수 있으니, 입력하신 정보 한번 더 확인 부탁드리겠습니다.",
   // 상담신청 클릭 시 뜨는 개인정보 동의 팝업
