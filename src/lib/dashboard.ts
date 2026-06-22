@@ -300,6 +300,82 @@ function aggregate(events: EventRow[]) {
     .reverse()
     .slice(0, 100);
 
+  // ── 전환자 동선 (상담신청/전화 누른 세션이 거쳐온 경로) ──
+  const sectionLabelMap = new Map(SECTION_ORDER.map((sec) => [sec.key, sec.label]));
+  const stepOf = (e: EventRow): string | null => {
+    const m = (e.meta || {}) as Attr;
+    switch (e.type) {
+      case "pageview":
+        return "방문";
+      case "section_view": {
+        const k = s(m.section);
+        return k && sectionLabelMap.has(k) ? sectionLabelMap.get(k)! : null;
+      }
+      case "click": {
+        const id = s(m.id) || "";
+        return CLICK_LABELS[id] || (id || null);
+      }
+      case "consult_form_open":
+        return "상담폼 열람";
+      case "consult_submit":
+        return "✅ 상담신청";
+      default:
+        return null; // scroll / page_time 등은 동선에서 제외
+    }
+  };
+
+  const convSessions = new Set<string>();
+  for (const e of events) {
+    if (!e.session_id) continue;
+    if (e.type === "consult_submit") convSessions.add(e.session_id);
+    if (e.type === "click" && s((e.meta as Attr)?.id) === "phone_call")
+      convSessions.add(e.session_id);
+  }
+  const sessionEvents = new Map<string, EventRow[]>();
+  for (const e of events) {
+    if (!e.session_id || !convSessions.has(e.session_id)) continue;
+    if (!sessionEvents.has(e.session_id)) sessionEvents.set(e.session_id, []);
+    sessionEvents.get(e.session_id)!.push(e);
+  }
+  const journeys = [...sessionEvents.values()]
+    .map((evs) => {
+      evs.sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      );
+      const start = new Date(evs[0].created_at).getTime();
+      const steps: { label: string; at: number }[] = [];
+      for (const e of evs) {
+        const label = stepOf(e);
+        if (!label) continue;
+        if (steps.length && steps[steps.length - 1].label === label) continue;
+        steps.push({
+          label,
+          at: Math.round((new Date(e.created_at).getTime() - start) / 1000),
+        });
+      }
+      const pv = evs.find((e) => e.type === "pageview");
+      const submitted = evs.some((e) => e.type === "consult_submit");
+      const last = evs[evs.length - 1];
+      return {
+        at: last.created_at,
+        type: submitted ? "상담신청" : "전화",
+        source: pv ? sourceLabel(pv) : "직접/자연유입",
+        device:
+          last.device === "mobile"
+            ? "모바일"
+            : last.device === "desktop"
+              ? "PC"
+              : "-",
+        durationSec: Math.round(
+          (new Date(last.created_at).getTime() - start) / 1000,
+        ),
+        steps,
+      };
+    })
+    .sort((a, b) => (a.at < b.at ? 1 : -1))
+    .slice(0, 25);
+
   return {
     totals: {
       pageviews: pageviews.length,
@@ -320,6 +396,7 @@ function aggregate(events: EventRow[]) {
     campaignPerf,
     keywordPerf,
     conversions,
+    journeys,
     totalSessions,
     totalEvents: events.length,
   };

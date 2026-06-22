@@ -139,6 +139,14 @@ function Dashboard({ stats }: { stats: Stats }) {
         <Leads rows={stats.conversions} />
       </Card>
 
+      {/* 전환자 동선 */}
+      <Card
+        title="전환자 동선 (상담신청·전화까지 경로)"
+        sub="전환한 사람이 어느 섹션을 거쳐 무엇을 클릭하고 전환했는지 (최근순)"
+      >
+        <Journeys rows={stats.journeys} />
+      </Card>
+
       <div className="grid gap-4 lg:grid-cols-2">
         {/* 일자별 방문 추이 */}
         <Card title="일자별 방문 추이">
@@ -422,6 +430,77 @@ function Leads({
           ))}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+function durLabel(sec: number): string {
+  if (sec >= 60) return `${Math.floor(sec / 60)}분 ${sec % 60}초`;
+  return `${sec}초`;
+}
+
+function Journeys({
+  rows,
+}: {
+  rows: {
+    at: string;
+    type: string;
+    source: string;
+    device: string;
+    durationSec: number;
+    steps: { label: string; at: number }[];
+  }[];
+}) {
+  if (rows.length === 0) {
+    return (
+      <p className="text-sm text-slate-400">
+        아직 전환(상담신청·전화) 동선 데이터가 없습니다.
+      </p>
+    );
+  }
+  return (
+    <div className="space-y-4">
+      {rows.map((j, i) => (
+        <div key={i} className="border-b border-slate-100 pb-4 last:border-0">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+            <span
+              className={`rounded px-2 py-0.5 font-semibold ${
+                j.type === "상담신청"
+                  ? "bg-emerald-50 text-emerald-600"
+                  : "bg-sky-50 text-sky-600"
+              }`}
+            >
+              {j.type === "상담신청" ? "상담신청" : "전화"}
+            </span>
+            <span>{kstTime.format(new Date(j.at))}</span>
+            <span>· 유입 {j.source}</span>
+            <span>· {j.device}</span>
+            <span>· 체류 {durLabel(j.durationSec)}</span>
+            <span>· {j.steps.length}단계</span>
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-1">
+            {j.steps.map((st, k) => (
+              <span key={k} className="flex items-center gap-1">
+                <span
+                  className={`rounded px-2 py-1 text-xs ${
+                    st.label.startsWith("✅")
+                      ? "bg-emerald-100 font-semibold text-emerald-700"
+                      : st.label === "전화번호 클릭"
+                        ? "bg-sky-100 font-semibold text-sky-700"
+                        : "bg-slate-100 text-slate-600"
+                  }`}
+                  title={`${st.at}초`}
+                >
+                  {st.label}
+                </span>
+                {k < j.steps.length - 1 && (
+                  <span className="text-slate-300">→</span>
+                )}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
