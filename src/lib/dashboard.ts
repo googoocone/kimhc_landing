@@ -411,19 +411,30 @@ export async function getStats(
   const days = RANGES[range].days;
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
-  const { data, error } = await sb
-    .from("events")
-    .select(
-      "type,visitor_id,session_id,referrer,device,country,meta,created_at",
-    )
-    .gte("created_at", since)
-    .order("created_at", { ascending: true })
-    .limit(100000);
+  // Supabase(PostgREST)는 요청당 최대 1000행만 반환(max-rows) → 1000개씩 페이지네이션으로 전부 수집
+  const PAGE = 1000;
+  const MAX = 200000; // 안전 상한
+  const all: EventRow[] = [];
+  for (let from = 0; from < MAX; from += PAGE) {
+    const { data, error } = await sb
+      .from("events")
+      .select(
+        "type,visitor_id,session_id,referrer,device,country,meta,created_at",
+      )
+      .gte("created_at", since)
+      .order("created_at", { ascending: true })
+      .range(from, from + PAGE - 1);
 
-  if (error) {
-    console.error("[dashboard] fetch error:", error.message);
-    return { ok: false, stats: null };
+    if (error) {
+      console.error("[dashboard] fetch error:", error.message);
+      // 일부라도 가져온 게 있으면 그걸로 집계, 아니면 실패
+      if (all.length === 0) return { ok: false, stats: null };
+      break;
+    }
+    if (!data || data.length === 0) break;
+    all.push(...(data as EventRow[]));
+    if (data.length < PAGE) break; // 마지막 페이지
   }
 
-  return { ok: true, stats: aggregate((data || []) as EventRow[]) };
+  return { ok: true, stats: aggregate(all) };
 }
