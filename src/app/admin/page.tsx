@@ -115,6 +115,14 @@ function Dashboard({ stats }: { stats: Stats }) {
         <Funnel steps={stats.funnel} />
       </Card>
 
+      {/* 전환자 동선 */}
+      <Card
+        title="전환자 동선 (상담신청·전화까지 경로)"
+        sub="전환한 사람이 어느 섹션을 거쳐 무엇을 클릭하고 전환했는지 (최근순)"
+      >
+        <Journeys rows={stats.journeys} />
+      </Card>
+
       {/* ★ 광고 → 상담 전환 (캠페인/키워드별) */}
       <div className="grid gap-4 lg:grid-cols-2">
         <Card
@@ -137,14 +145,6 @@ function Dashboard({ stats }: { stats: Stats }) {
         sub="누가 어느 광고·키워드로 들어와 신청했는지 (최근순)"
       >
         <Leads rows={stats.conversions} />
-      </Card>
-
-      {/* 전환자 동선 */}
-      <Card
-        title="전환자 동선 (상담신청·전화까지 경로)"
-        sub="전환한 사람이 어느 섹션을 거쳐 무엇을 클릭하고 전환했는지 (최근순)"
-      >
-        <Journeys rows={stats.journeys} />
       </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
