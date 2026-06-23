@@ -46,15 +46,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // 시트 열 제목과 1:1 매칭 (탭에 없는 열은 보내지 않으면 그대로 비어 있음)
-    //   앞에 ' 를 붙여 구글시트가 타임스탬프를 일련번호로 변환하지 않고 텍스트로 저장
+    // 시트 열 제목과 1:1 매칭 (탭에 없는 열/안 보낸 열은 그대로 비어 있음)
+    //   특이사항은 사무실 수기 기재용으로 비워둠. 유입 구분은 1차 유입경로에 기록.
     const now = new Date();
     const row = {
-      타임스탬프: `'${kstTimestamp(now)}`,
+      타임스탬프: kstTimestamp(now),
       성명: name,
       연락처: phone,
       상담항목: category,
-      특이사항: "김훈찬변호사님 렌딩",
+      "1차 유입경로": "김훈찬 변호사님 랜딩",
     };
 
     const apiUrl = process.env.SHEET_API_URL;
